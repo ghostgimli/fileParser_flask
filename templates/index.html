@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask Buttons</title>
+    <style type="text/css">
+        body {
+              font-size: 14pt;
+              font: 'Calibri';
+              text-align: justify-all;
+        }
+        .cls {
+              color: black;
+              font: 'Calibri';
+              line-height: 150%;
+              margin-left: 40%;
+              text-align: left;
+        }
+        .clsrad{
+              margin-left: 3%;
+        }
+        .buttons {
+            margin: 0 40%;
+            line-height: 250%;
+            font-size: 22pt;
+            text-align: center;
+        }
+        .flash {
+            margin: 0 40%;
+            font-size: 22pt;
+            color: red;
+            font-weight: bold;
+            font: 'Calibri';
+        }
+    </style>
+
+</head>
+<body>
+    <h1 align="center">Корректировка Выгрузки</h1>
+    
+    <!-- Submit Button for a Form -->
+    <form action="send" method="POST" enctype="multipart/form-data">
+        <div class="cls">
+        Название инцидента:
+        <input type="text" name="INC" value="example">
+        <br />
+        Среда разработки
+            <select name="AppEnv"  >
+                {% for item in envs %}
+                <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="cls" >
+            Статус выгрузки
+            <select name="Status">
+                
+                {% for item in statuses %}
+                <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="cls">
+            EgrulIsNotIncluded
+            <br/>
+            <input type="radio" name="EgrulIsNotIncluded" value="true" class=clsrad>true</input><br/>
+            <input type="radio" name="EgrulIsNotIncluded" value="false" class=clsrad checked="checked">false</input><br/>
+        </div>
+        <div class="cls">
+            Файл:
+            <input type="file" name="upload_file"/>
+        </div>
+        
+        <div class="buttons">
+            <input  type="submit" name="submit_button" value="Старт">
+        </div>
+    </form>
+    <div class="flash">
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        {% endwith %}
+    </div>
+
+</body>
+</html>
