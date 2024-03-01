@@ -136,8 +136,8 @@ class XMLdoc:
                 root.insert(child[0], new )
             elif child[1].tag == "IsObosob" and child[1].text == "1":
                 print("проверьте, что правильный статус указан у головной организации")
-            elif 'OgrDos' in child[1].tag:
-                self.rec_remove(child[1], root)
+            # elif 'OgrDos' in child[1].tag:
+            #     self.rec_remove(child[1], root)
             self.Egrul_status_change(child[1], self.EgrulIsNotIncluded)
             self.status_change(child[1], self.OrgStatus)
         doc.write(self.Xml_file, encoding=encoding)
