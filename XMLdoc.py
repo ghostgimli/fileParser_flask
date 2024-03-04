@@ -153,7 +153,7 @@ class XMLdoc:
                     os.mkdir(self.new_file)
                 except (FileExistsError):
                     print('Folder already exists, skipping')
-                file_path=self.new_file + '\\' + self.new_file + '.xml'
+                file_path=self.new_file + '.xml'
                 self.write_file(result, file_path)
                 return file_path
                 #header=arr_template[item[0]:]
