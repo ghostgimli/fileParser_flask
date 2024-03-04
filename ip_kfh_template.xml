@@ -1,0 +1,25 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://www.roskazna.ru/eb/services/transferDocumentService/types">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <typ:transferDocumentRequest versionId="1.0">
+            <typ:header>
+                <typ:packageId>fd9d71fc-b296-4a6b-1208-b246877ee319</typ:packageId>
+                <typ:senderSystemId>REF</typ:senderSystemId>
+                <typ:targetSystemId>POIB</typ:targetSystemId>
+                <typ:documentType>REF_IPandKFH</typ:documentType>
+                <typ:documentGuid>2c561f3f-85b7-49b4-124b-a1a66ec74fe1</typ:documentGuid>
+                <typ:creationDateTime>2022-01-28T13:12:04.361+03:00</typ:creationDateTime>
+                <typ:params>
+                    <typ:param name="versionId" value="1.1"/>
+                    <typ:param name="fkSegmentCode" value="N"/>
+                    <typ:param name="tofkCode" value="9500"/>
+                    <typ:param name="fkSystem" value="E"/>
+                </typ:params>
+            </typ:header>
+            <typ:document>
+                <REF_IPandKFH xmlns="http://www.roskazna.ru/eb/domain/REF_IPandKFH/formular" version="1.1">
+                </REF_IPandKFH>
+            </typ:document>
+        </typ:transferDocumentRequest>
+    </soapenv:Body>
+</soapenv:Envelope>
