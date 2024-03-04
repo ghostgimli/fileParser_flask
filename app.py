@@ -40,10 +40,10 @@ def send_data():
                 os.mkdir(app.config['UPLOAD_FOLDER']+'/'+ newfile_name)
             except (FileExistsError):
                 print('Folder already exists, skipping')
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'],  newfile_name+'.xml')) # cначала папка потом файл
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], newfile_name, newfile_name+'.xml')) # cначала папка потом файл
             #return redirect(url_for('download_file', name=filename))
 
-            xml = XMLdoc(app.config['UPLOAD_FOLDER']+'/'+ newfile_name+'.xml', request.form['Status'],request.form['EgrulNotIncluded'])
+            xml = XMLdoc(app.config['UPLOAD_FOLDER']+'/'+newfile_name+'/'+ newfile_name+'.xml', request.form['Status'],request.form['EgrulNotIncluded'])
             if xml.check_encoding()['encoding'] != 'utf-8':
                 xml.convert_encoding(old_encoding="iso-8859-5", new_encoding="utf-8")
 
