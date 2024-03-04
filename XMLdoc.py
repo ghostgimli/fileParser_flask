@@ -6,12 +6,11 @@ import xml.etree.ElementTree as ET
 import io
 import os
 class XMLdoc:
-    def __init__(self,  Xml_file, new_file, OrgStatus, EgrulIsNotIncluded):
+    def __init__(self,Xml_file, OrgStatus, EgrulNotIncluded):
         # self.Xml_doc=_Xml_doc
-        self.Xml_file=Xml_file
-        self.new_file = new_file
+        self.Xml_file = Xml_file
         self.OrgStatus = OrgStatus
-        self.EgrulIsNotIncluded = EgrulIsNotIncluded
+        self.EgrulNotIncluded = EgrulNotIncluded
 
     @staticmethod
     def open_file(file, encoding ="utf-8"):
@@ -105,7 +104,7 @@ class XMLdoc:
         elif element.tag == "OrgStatus":
             element.text = status
     def Egrul_status_change(self, element, bools):
-        if element.tag == "EgrulIsNotIncluded":
+        if element.tag == "EgrulNotIncluded":
             element.text = bools
     # Status изменим
 
@@ -138,7 +137,7 @@ class XMLdoc:
                 print("проверьте, что правильный статус указан у головной организации")
             # elif 'OgrDos' in child[1].tag:
             #     self.rec_remove(child[1], root)
-            self.Egrul_status_change(child[1], self.EgrulIsNotIncluded)
+            self.Egrul_status_change(child[1], self.EgrulNotIncluded)
             self.status_change(child[1], self.OrgStatus)
         doc.write(self.Xml_file, encoding=encoding)
 
@@ -149,13 +148,11 @@ class XMLdoc:
         for item in enumerate(arr_template):
             if splitter in item[1]:
                 result=arr_template[:item[0]]+arr_src+arr_template[item[0]:]
-                try:
-                    os.mkdir(self.new_file)
-                except (FileExistsError):
-                    print('Folder already exists, skipping')
-                file_path=self.new_file + '.xml'
+
+                #Можно сначала сделать
+                file_path= self.Xml_file
                 self.write_file(result, file_path)
                 return file_path
                 #header=arr_template[item[0]:]
                 #close_header=arr[:item[0]]
-        return "Неправильно задана разбивка, обратитесь к автору этой какахи"
+        return ""

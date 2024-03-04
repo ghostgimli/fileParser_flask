@@ -33,18 +33,31 @@ def send_data():
             flash('No selected file')
             return redirect(request.url)
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            #filename = secure_filename(file.filename)
             curdate = datetime.date.today().strftime('%d.%m.%Y')
             newfile_name = curdate + '_' + request.form['INC'] + '_' + request.form['AppEnv']
+            try:
+                os.mkdir(app.config['UPLOAD_FOLDER']+'\\'+ newfile_name)
+            except (FileExistsError):
+                print('Folder already exists, skipping')
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], newfile_name, newfile_name+'.xml')) # cначала папка потом файл
             #return redirect(url_for('download_file', name=filename))
 
-            xml = XMLdoc(UPLOAD_FOLDER+'/'+filename,newfile_name,request.form['Status'],request.form['EgrulIsNotIncluded'])
+            xml = XMLdoc(app.config['UPLOAD_FOLDER']+'\\'+ newfile_name+'\\'+ newfile_name+'.xml', request.form['Status'],request.form['EgrulNotIncluded'])
             if xml.check_encoding()['encoding'] != 'utf-8':
                 xml.convert_encoding(old_encoding="iso-8859-5", new_encoding="utf-8")
+
+            #Удалим заголовки
             xml.remove_header()
+            #Отредачим тело
             xml.edit_xml()
-            return send_file(xml.set_header("template.xml", "utf-8"), as_attachment=True)
+            #Поставим заголовки и скачаем пользователю
+            output_file = xml.set_header("ul_template.xml", "utf-8")
+            try:
+                return send_file(output_file, as_attachment=True)
+            except FileNotFoundError:
+                flash('No templates for splitting. Ask manager')
+                pass
     return render_template('index.html', statuses=statuses, envs=envs)
 
 if __name__ == '__main__':
