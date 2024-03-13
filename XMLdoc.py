@@ -104,7 +104,7 @@ class XMLdoc:
         elif element.tag == "OrgStatus":
             element.text = status
     def Egrul_status_change(self, element, bools):
-        if element.tag == "EgrulNotIncluded":
+        if element.tag == "EGRULNotIncluded":
             element.text = bools
     # Status изменим
 
