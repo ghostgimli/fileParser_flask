@@ -58,34 +58,33 @@ class XMLdoc:
     #         if len(elem):
     #             ET.SubElement()
 
-    # def rec_remove(self,element,parent):
-    #     if parent.find(element.tag) == None:
-    #         for i in range(len(parent)):
-    #             if len(parent[i]): # если что-то вложено ещё
-    #                 a=parent[i]
-    #                 self.rec_remove(element,parent[i])
-    #     else:
-    #         #
-    #         #try:
-    #         elem=parent.find(element.tag)
-    #         l = list(parent)
-    #         parent.remove(elem)
-    #         #except (ValueError):
-    #         #    pass
-    #     # result=[]
-    #     # src_arr = arr
-    #     # for i in range(len(arr)):
-    #     #     if len(arr[i]):
-    #     #         #d = list(arr[i].iter())
-    #     #         for sub in arr[i]:
-    #     #             arr[i].remove(sub)
-    #     # full = self.restore_subs(arr[i],arr)
-    #     # self.restore_subs(arr[i], arr)
-    #     # b = arr[i]
-    #     # a = ET.tostring(arr[i], encoding='utf-8').decode("utf-8")
-    #     # result.append(a)
-    #
-    #     #return ''.join(result)
+    def rec_remove(self,element,parent):
+        if parent.find(element.tag) == None:
+            for i in range(len(parent)):
+                if len(parent[i]): # если что-то вложено ещё
+                    self.rec_remove(element,parent[i])
+        else:
+            #
+            #try:
+            elem=parent.find(element.tag)
+            l = list(parent)
+            parent.remove(elem)
+            #except (ValueError):
+            #    pass
+        # result=[]
+        # src_arr = arr
+        # for i in range(len(arr)):
+        #     if len(arr[i]):
+        #         #d = list(arr[i].iter())
+        #         for sub in arr[i]:
+        #             arr[i].remove(sub)
+        # full = self.restore_subs(arr[i],arr)
+        # self.restore_subs(arr[i], arr)
+        # b = arr[i]
+        # a = ET.tostring(arr[i], encoding='utf-8').decode("utf-8")
+        # result.append(a)
+
+        #return ''.join(result)
 
     #преобразуем xml в ET и назначим рабочее пространство в row
     @staticmethod
@@ -110,7 +109,7 @@ class XMLdoc:
         elif element.tag == "OrgStatus":
             element.text = status
     def Egrul_status_change(self, element, bools):
-        if element.tag == "EgrulNotIncluded":
+        if element.tag == "EGRULNotIncluded":
             element.text = bools
     # Status изменим
 
@@ -143,6 +142,8 @@ class XMLdoc:
                 self.set_output_file(child[1].text+'.xml')
             elif child[1].tag == "IsObosob" and child[1].text == "1":
                 print("проверьте, что правильный статус указан у головной организации")
+            elif child[1].tag == "IsConfidantUCFK":
+                self.rec_remove(child[1], root)
             # elif 'OgrDos' in child[1].tag:
             #     self.rec_remove(child[1], root)
             self.Egrul_status_change(child[1], self.EgrulNotIncluded)

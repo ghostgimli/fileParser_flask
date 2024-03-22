@@ -49,7 +49,7 @@ def send_data():
                 #return redirect(url_for('download_file', name=filename))
 
                 # Начинаем обработку сохранённого файла
-                xml = XMLdoc(app.config['UPLOAD_FOLDER'],dir_name,dir_name+'.xml', request.form['Status'],request.form['EgrulNotIncluded'])
+                xml = XMLdoc(app.config['UPLOAD_FOLDER'],dir_name,dir_name+'.xml', request.form['Status'],request.form['EGRULNotIncluded'])
                 #xml = XMLdoc(app.config['UPLOAD_FOLDER']+'//'+dir_name+'//'+ dir_name+'.xml', request.form['Status'],request.form['EgrulNotIncluded'])
                 if xml.check_encoding()['encoding'] != 'utf-8':
                     xml.convert_encoding(old_encoding="iso-8859-5", new_encoding="utf-8")
