@@ -4,6 +4,8 @@ from werkzeug.utils import secure_filename
 from XMLdoc import XMLdoc
 import os
 import datetime
+import shutil
+
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'xml'}
 
@@ -26,38 +28,45 @@ def send_data():
         if 'upload_file' not in request.files:
             flash('No file part')
             return redirect(request.url)
-        file = request.files['upload_file']
+        files = list(request.files.lists())[0][1]
+        output_file=''
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
-        if file.filename == '':
+        if len(files) == 0:
             flash('No selected file')
             return redirect(request.url)
-        if file and allowed_file(file.filename):
-            #filename = secure_filename(file.filename)
-            curdate = datetime.date.today().strftime('%d.%m.%Y')
-            newfile_name = curdate + '_' + request.form['INC'] + '_' + request.form['AppEnv']
-            try:
-                os.mkdir(app.config['UPLOAD_FOLDER']+'/'+ newfile_name)
-            except (FileExistsError):
-                print('Folder already exists, skipping')
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], newfile_name, newfile_name+'.xml')) # cначала папка потом файл
-            #return redirect(url_for('download_file', name=filename))
+            # filename = secure_filename(file.filename)
+        curdate = datetime.date.today().strftime('%d.%m.%Y')
+        dir_name = curdate + '_' + request.form['INC'] + '_' + request.form['AppEnv']
+        try:
+            os.mkdir(app.config['UPLOAD_FOLDER'] + '//' + dir_name)
+        except (FileExistsError):
+            print('Folder already exists, skipping')
+        for file in files:
+                #Сохраняем загруженный файл
+                upload_file_path =os.path.join(app.config['UPLOAD_FOLDER'], dir_name, dir_name+'.xml')
+                file.save(upload_file_path) # cначала папка потом файл
+                #return redirect(url_for('download_file', name=filename))
 
-            xml = XMLdoc(app.config['UPLOAD_FOLDER']+'//'+newfile_name+'//'+ newfile_name+'.xml', request.form['Status'],request.form['EgrulNotIncluded'])
-            if xml.check_encoding()['encoding'] != 'utf-8':
-                xml.convert_encoding(old_encoding="iso-8859-5", new_encoding="utf-8")
-
-            #Удалим заголовки
-            xml.remove_header()
-            #Отредачим тело
-            xml.edit_xml()
-            #Поставим заголовки и скачаем пользователю
-            output_file = xml.set_header("ul_template.xml", "utf-8")
-            try:
-                return send_file(output_file, as_attachment=True)
-            except FileNotFoundError:
-                flash('No templates for splitting. Ask manager')
-                pass
+                # Начинаем обработку сохранённого файла
+                xml = XMLdoc(app.config['UPLOAD_FOLDER'],dir_name,dir_name+'.xml', request.form['Status'],request.form['EgrulNotIncluded'])
+                #xml = XMLdoc(app.config['UPLOAD_FOLDER']+'//'+dir_name+'//'+ dir_name+'.xml', request.form['Status'],request.form['EgrulNotIncluded'])
+                if xml.check_encoding()['encoding'] != 'utf-8':
+                    xml.convert_encoding(old_encoding="iso-8859-5", new_encoding="utf-8")
+                #Удалим заголовки
+                xml.remove_header()
+                #Отредачим тело
+                xml.edit_xml()
+                #Поставим заголовки и скачаем пользователю
+                output_file = xml.set_header("ul_template.xml", "utf-8")
+                os.remove(upload_file_path)
+        try:
+            output_folder_path=app.config['UPLOAD_FOLDER']+'\\'+dir_name
+            shutil.make_archive(output_folder_path, 'zip', output_folder_path)
+            return send_file(output_folder_path, as_attachment=True)
+        except FileNotFoundError:
+            flash('No templates for splitting. Ask manager')
+            pass
     return render_template('index.html', statuses=statuses, envs=envs)
 
 if __name__ == '__main__':

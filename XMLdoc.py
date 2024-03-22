@@ -6,9 +6,12 @@ import xml.etree.ElementTree as ET
 import io
 import os
 class XMLdoc:
-    def __init__(self,Xml_file, OrgStatus, EgrulNotIncluded):
+    def __init__(self,upload_folder, output_dir,output_file, OrgStatus, EgrulNotIncluded):
         # self.Xml_doc=_Xml_doc
-        self.Xml_file = Xml_file
+        self.upload_folder = upload_folder
+        self.output_dir = output_dir
+        self.output_file = output_file
+        self.full_path= upload_folder+'//'+output_dir+'//'+output_file
         self.OrgStatus = OrgStatus
         self.EgrulNotIncluded = EgrulNotIncluded
 
@@ -31,12 +34,12 @@ class XMLdoc:
         self.write_file(arr,new,encoding)
 
     def convert_encoding(self,old_encoding, new_encoding):
-        arr = self.open_file(self.Xml_file, old_encoding)
-        self.write_file(arr,self.Xml_file,new_encoding)
+        arr = self.open_file(self.full_path, old_encoding)
+        self.write_file(arr,self.full_path,new_encoding)
 
     def check_encoding(self):
         detector = UniversalDetector()
-        with open(self.Xml_file, 'rb') as fh:
+        with open(self.full_path, 'rb') as fh:
             for line in fh:
                 detector.feed(line)
                 if detector.done:
@@ -44,42 +47,45 @@ class XMLdoc:
             detector.close()
         return detector.result
 
-    def set_Xml_file(self, Xml_file):
-        self.Xml_file=Xml_file
 
-    def restore_subs(self,arr,main_arr):
-        for elem in main_arr[i]:
-            if len(elem):
-                ET.SubElement()
+# В отличии от set, актуализирует связку upload_folder+ output_folder+ output_file
+    def update_full_path(self):
+        self.full_path=self.upload_folder+'//'+self.output_dir+'//'+self.output_file
+    def set_output_file(self, output_file):
+        self.output_file=output_file
+    # def restore_subs(self,arr,main_arr):
+    #     for elem in main_arr[i]:
+    #         if len(elem):
+    #             ET.SubElement()
 
-    def rec_remove(self,element,parent):
-        if parent.find(element.tag) == None:
-            for i in range(len(parent)):
-                if len(parent[i]): # если что-то вложено ещё
-                    a=parent[i]
-                    self.rec_remove(element,parent[i])
-        else:
-            #
-            #try:
-            elem=parent.find(element.tag)
-            l = list(parent)
-            parent.remove(elem)
-            #except (ValueError):
-            #    pass
-        # result=[]
-        # src_arr = arr
-        # for i in range(len(arr)):
-        #     if len(arr[i]):
-        #         #d = list(arr[i].iter())
-        #         for sub in arr[i]:
-        #             arr[i].remove(sub)
-        # full = self.restore_subs(arr[i],arr)
-        # self.restore_subs(arr[i], arr)
-        # b = arr[i]
-        # a = ET.tostring(arr[i], encoding='utf-8').decode("utf-8")
-        # result.append(a)
-
-        #return ''.join(result)
+    # def rec_remove(self,element,parent):
+    #     if parent.find(element.tag) == None:
+    #         for i in range(len(parent)):
+    #             if len(parent[i]): # если что-то вложено ещё
+    #                 a=parent[i]
+    #                 self.rec_remove(element,parent[i])
+    #     else:
+    #         #
+    #         #try:
+    #         elem=parent.find(element.tag)
+    #         l = list(parent)
+    #         parent.remove(elem)
+    #         #except (ValueError):
+    #         #    pass
+    #     # result=[]
+    #     # src_arr = arr
+    #     # for i in range(len(arr)):
+    #     #     if len(arr[i]):
+    #     #         #d = list(arr[i].iter())
+    #     #         for sub in arr[i]:
+    #     #             arr[i].remove(sub)
+    #     # full = self.restore_subs(arr[i],arr)
+    #     # self.restore_subs(arr[i], arr)
+    #     # b = arr[i]
+    #     # a = ET.tostring(arr[i], encoding='utf-8').decode("utf-8")
+    #     # result.append(a)
+    #
+    #     #return ''.join(result)
 
     #преобразуем xml в ET и назначим рабочее пространство в row
     @staticmethod
@@ -110,7 +116,7 @@ class XMLdoc:
 
 
     def remove_header(self,encoding="utf-8"):
-        doc = self.parse_xml(self.Xml_file)
+        doc = self.parse_xml(self.full_path)
         root = doc.getroot()
         for child in root.iter():
             row = child.find('row')
@@ -120,11 +126,11 @@ class XMLdoc:
         print(row.attrib)
         newdoc = ET.ElementTree(row)
         root =newdoc.getroot()
-        newdoc.write(self.Xml_file,encoding=encoding)
+        newdoc.write(self.full_path,encoding=encoding)
 
     #Другие названния нужны для отладки. Похже сменю на основные
     def edit_xml(self,encoding="utf-8"):
-        doc = self.parse_xml(self.Xml_file)
+        doc = self.parse_xml(self.full_path)
         root = doc.getroot()
         root.set("xmlns","")
         for child in enumerate(root.iter()):
@@ -133,24 +139,27 @@ class XMLdoc:
                 new=ET.Element("NoInternet", {})
                 new.text="false"
                 root.insert(child[0], new )
+            elif child[1].tag == "OrgCode":
+                self.set_output_file(child[1].text+'.xml')
             elif child[1].tag == "IsObosob" and child[1].text == "1":
                 print("проверьте, что правильный статус указан у головной организации")
             # elif 'OgrDos' in child[1].tag:
             #     self.rec_remove(child[1], root)
             self.Egrul_status_change(child[1], self.EgrulNotIncluded)
             self.status_change(child[1], self.OrgStatus)
-        doc.write(self.Xml_file, encoding=encoding)
+        doc.write(self.full_path, encoding=encoding)
 
     #Разбивка идёт по закрывающему тэгу
     def set_header(self,template, encoding="utf-8", INC="", environment="PROD", splitter = "</REF_UBPandNUBP>"):
-        arr_src = self.open_file(file=self.Xml_file)
+        arr_src = self.open_file(file=self.full_path)
         arr_template = self.open_file(file=template)
         for item in enumerate(arr_template):
             if splitter in item[1]:
                 result=arr_template[:item[0]]+arr_src+arr_template[item[0]:]
 
                 #Можно сначала сделать
-                file_path= self.Xml_file
+                self.update_full_path()
+                file_path= self.full_path
                 self.write_file(result, file_path)
                 return file_path
                 #header=arr_template[item[0]:]
