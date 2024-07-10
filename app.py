@@ -49,7 +49,10 @@ def send_data():
                 #return redirect(url_for('download_file', name=filename))
 
                 # Начинаем обработку сохранённого файла
-                xml = XMLdoc(app.config['UPLOAD_FOLDER'],dir_name,dir_name+'.xml', request.form['Status'],request.form['EGRULNotIncluded'])
+                try:
+                    xml = XMLdoc(app.config['UPLOAD_FOLDER'],dir_name,dir_name+'.xml', request.form['Status'],request.form['EGRULNotIncluded'])
+                except:
+                    break;
                 #xml = XMLdoc(app.config['UPLOAD_FOLDER']+'//'+dir_name+'//'+ dir_name+'.xml', request.form['Status'],request.form['EgrulNotIncluded'])
                 if xml.check_encoding()['encoding'] != 'utf-8':
                     xml.convert_encoding(old_encoding="iso-8859-5", new_encoding="utf-8")
@@ -57,19 +60,21 @@ def send_data():
                 xml.remove_header()
                 #Отредачим тело
                 xml.edit_xml()
-                #Поставим заголовки и скачаем пользователю
-                output_file = xml.set_header("ul_template.xml", "utf-8")
+                #Поставим заголовки
+                xml.set_header("ul_template.xml", "utf-8")
+                #Канонализируем и скачаем
+                #xml.canonicalize()
                 os.remove(upload_file_path)
         try:
-            output_folder_path=app.config['UPLOAD_FOLDER']+'\\'+dir_name
+            output_folder_path=app.config['UPLOAD_FOLDER']+'//'+dir_name
             shutil.make_archive(output_folder_path, 'zip', output_folder_path)
-            return send_file(output_folder_path, as_attachment=True)
+            return send_file(output_folder_path+'.zip', as_attachment=True)
         except FileNotFoundError:
             flash('No templates for splitting. Ask manager')
             pass
     return render_template('index.html', statuses=statuses, envs=envs)
 
 if __name__ == '__main__':
-    app.secret_key = os.urandom(24)
+
     app.run()
 
