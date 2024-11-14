@@ -11,9 +11,10 @@ class XMLdoc:
         self.upload_folder = upload_folder
         self.output_dir = output_dir
         self.output_file = output_file
-        self.full_path= upload_folder+'//'+output_dir+'//'+output_file
+        self.full_path= os.path.join(upload_folder,output_dir,output_file)
         self.OrgStatus = OrgStatus
         self.EgrulNotIncluded = EgrulNotIncluded
+        self.convert_encoding(self.check_encoding()['encoding'],"utf-8")
         self.doc = self.parse_xml(self.full_path)
 
     @staticmethod
@@ -35,6 +36,7 @@ class XMLdoc:
         self.write_file(arr,new,encoding)
 
     def convert_encoding(self,old_encoding, new_encoding):
+        temp_var = old_encoding
         arr = self.open_file(self.full_path, old_encoding)
         self.write_file(arr,self.full_path,new_encoding)
 

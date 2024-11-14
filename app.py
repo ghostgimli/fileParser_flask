@@ -54,8 +54,8 @@ def send_data():
                 except:
                     break;
                 #xml = XMLdoc(app.config['UPLOAD_FOLDER']+'//'+dir_name+'//'+ dir_name+'.xml', request.form['Status'],request.form['EgrulNotIncluded'])
-                if xml.check_encoding()['encoding'] != 'utf-8':
-                    xml.convert_encoding(old_encoding="iso-8859-5", new_encoding="utf-8")
+                # if xml.check_encoding()['encoding'] != 'utf-8':
+                #     xml.convert_encoding(old_encoding="iso-8859-5", new_encoding="utf-8")
                 #Удалим заголовки
                 xml.remove_header()
                 #Отредачим тело
