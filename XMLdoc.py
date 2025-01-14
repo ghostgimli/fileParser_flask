@@ -143,8 +143,8 @@ class XMLdoc:
                 self.set_output_file(child[1].text+'.xml')
             elif child[1].tag == "IsObosob" and child[1].text == "1":
                 print("проверьте, что правильный статус указан у головной организации")
-            elif child[1].tag == "IsConfidantUCFK":
-                self.rec_remove(child[1], root)
+            # elif child[1].tag == "IsConfidantUCFK":
+            #     self.rec_remove(child[1], root)
             # elif 'OgrDos' in child[1].tag:
             #     self.rec_remove(child[1], root)
             self.Egrul_status_change(child[1], self.EgrulNotIncluded)
