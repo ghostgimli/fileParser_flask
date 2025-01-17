@@ -15,6 +15,13 @@
               margin-left: 40%;
               text-align: left;
         }
+        .svr_version{
+              color: black;
+              font: 'Calibri';
+              line-height: 150%;
+              margin-left: 35%;
+              text-align: left;
+        }
         .clsrad{
               margin-left: 3%;
         }
@@ -40,15 +47,17 @@
     <!-- Submit Button for a Form -->
     <form action="send" method="POST" enctype="multipart/form-data">
         <div class="cls">
-        Название инцидента:
-        <input type="text" name="INC" value="example">
-        <br />
-        Среда разработки
-            <select name="AppEnv"  >
-                {% for item in envs %}
-                <option value="{{ item }}">{{ item }}</option>
-                {% endfor %}
-            </select>
+            Название инцидента:
+            <input type="text" name="INC" value="example">
+            <br>
+        </div>
+        <div class="cls">
+            Среда разработки
+                <select name="AppEnv"  >
+                    {% for item in envs %}
+                    <option value="{{ item }}">{{ item }}</option>
+                    {% endfor %}
+                </select>
         </div>
         <div class="cls" >
             Статус выгрузки
@@ -64,6 +73,10 @@
             <br/>
             <input type="radio" name="EGRULNotIncluded" value="true" class=clsrad>true</input><br/>
             <input type="radio" name="EGRULNotIncluded" value="false" class=clsrad checked="checked">false</input><br/>
+        </div>
+        <div class="svr_version">
+            Версия СВР (меняется только шапка):
+            <input type="text" name="SVR_VERSION" value="2.1">
         </div>
         <div class="cls">
             Файл:

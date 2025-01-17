@@ -17,8 +17,6 @@
             </typ:params>
          </typ:header>
          <typ:document>
-            <REF_UBPandNUBP version="2.1" xmlns="http://www.roskazna.ru/eb/domain/REF_UBPandNUBP/formular">
-            </REF_UBPandNUBP>
          </typ:document>
       </typ:transferDocumentRequest>
    </soapenv:Body>
